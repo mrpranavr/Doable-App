@@ -1,15 +1,14 @@
-import { Text, View } from "react-native";
+import { View, Text } from 'react-native'
+import React from 'react'
+import AuthenticateScreen from './AuthenticateScreen'
+import SignUpScreen from './(auth)/sign-up'
 
-export default function Index() {
+const LandingScreen = () => {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+    <View className='flex-1'>
+      <SignUpScreen />
     </View>
-  );
+  )
 }
+
+export default LandingScreen

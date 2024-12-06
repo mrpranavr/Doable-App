@@ -4,7 +4,28 @@ module.exports = {
   content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
   presets: [require("nativewind/preset")],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        dmSans: {
+          regular: 'DMSans-Regular',
+          bold: 'DMSans-Bold',
+        }
+      },
+      colors: {
+        primary: {
+          dark: '#202020'
+        },
+        bold: {
+          yellow: '#FEF752',
+          purple: '#C8A2E5',
+          green: '#BCEF4C',
+          orange: '#FEA67D'
+        },
+        secondary: {
+          white: '#FFFFFF'
+        }
+      }
+    },
   },
   plugins: [],
 }
