@@ -6,13 +6,22 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Image,
+  Dimensions,
 } from "react-native";
 import React, { useCallback, useState } from "react";
 import CustomTextInput from "@/components/CustomTextInput";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import debounce from "lodash.debounce";
+import { useRouter } from "expo-router";
+
+const KEYBOARD_HEIGHT_OFFSET = -200;
+const {height, width} = Dimensions.get('screen');
+// const HEADER_VERTICAL_OFFSET = -(height / );
 
 const SignUpScreen = () => {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -28,11 +37,16 @@ const SignUpScreen = () => {
   };
 
   return (
-    <View className="px-4 w-full flex-1 items-center justify-center bg-primary-dark">
+    <View className="relative w-full flex-1 items-center justify-center bg-primary-dark">
+      <Image
+        source={require("@/assets/images/checker_bg.png")}
+        style={{ width: "100%", height: "100%" }}
+        className="absolute"
+      />
       <KeyboardAvoidingView
-        className="w-full h-full flex justify-between"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={0}
+        className="w-full h-full flex justify-end px-4 relative"
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={KEYBOARD_HEIGHT_OFFSET}
       >
         {/* Doable Header */}
         <View className="flex-col items-center justify-center space-y-4 flex-1">
@@ -46,17 +60,12 @@ const SignUpScreen = () => {
 
         {/* User form */}
         <View className="flex w-full items-center justify-center gap-5 mb-10">
-          <View className="flex-row items-center bg-primary-light rounded-xl px-4 py-5 w-full">
-            {/* Icon here */}
-            <TextInput
-              placeholder="Enter your email"
-              placeholderTextColor="#A0A0A0"
-              className="font-dmSans tracking-widest text-secondary-white w-full"
-              // value={email}
-              onChangeText={debouncedSetEmail}
-              keyboardType="email-address"
-            />
-          </View>
+          <CustomTextInput
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={setEmail}
+          />
           <CustomTextInput
             type="password"
             placeholder="Enter your password"
@@ -73,6 +82,20 @@ const SignUpScreen = () => {
               Continue
             </Text>
           </TouchableOpacity>
+
+          {/* New user sign up link */}
+          <View className="flex-row items-center justify-center gap-2 mt-4">
+            <Text className="text-secondary-white font-dmSans tracking-widest">
+              New to DoAble ?
+            </Text>
+            <TouchableOpacity
+              onPress={() => router.push("/(auth)/newUserSignIn")}
+            >
+              <Text className="text-secondary-white font-dmSans tracking-widest underline font-bold">
+                Sign Up Now
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           {/* Or Divider */}
           <View className="flex-row items-center justify-center w-full gap-4">
