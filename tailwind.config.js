@@ -13,7 +13,8 @@ module.exports = {
       },
       colors: {
         primary: {
-          dark: '#202020'
+          dark: '#202020',
+          light: '#363636'
         },
         bold: {
           yellow: '#FEF752',
