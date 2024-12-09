@@ -8,12 +8,14 @@ import {
   Platform,
   Image,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import React, { useCallback, useState } from "react";
 import CustomTextInput from "@/components/CustomTextInput";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import debounce from "lodash.debounce";
 import { useRouter } from "expo-router";
+import { useSignIn } from "@clerk/clerk-expo";
 
 const KEYBOARD_HEIGHT_OFFSET = -200;
 const {height, width} = Dimensions.get('screen');
@@ -24,6 +26,9 @@ const SignUpScreen = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const {signIn, isLoaded, setActive} = useSignIn()
 
   const debouncedSetEmail = useCallback(
     debounce((value: string) => {
@@ -32,8 +37,25 @@ const SignUpScreen = () => {
     []
   );
 
-  const createAccount = () => {
-    console.log(email, password);
+  const signInUser = async () => {
+    if(!isLoaded) {
+      return;
+    }
+    setLoading(true);
+
+    try {
+      const result = await signIn.create({
+        identifier: email,
+        password
+      })
+
+      await setActive({ session: result.createdSessionId })
+
+    } catch (error: any) {
+      alert(error.message)
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -43,6 +65,11 @@ const SignUpScreen = () => {
         style={{ width: "100%", height: "100%" }}
         className="absolute"
       />
+      {loading && (
+        <View className="absolute top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center bg-primary-dark">
+          <ActivityIndicator size="large" color="#fff" />
+        </View>
+      )}
       <KeyboardAvoidingView
         className="w-full h-full flex justify-end px-4 relative"
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -62,7 +89,7 @@ const SignUpScreen = () => {
         <View className="flex w-full items-center justify-center gap-5 mb-10">
           <CustomTextInput
             type="email"
-            placeholder="Enter your email"
+            placeholder="Enter your email or username"
             value={email}
             onChange={setEmail}
           />
@@ -76,9 +103,9 @@ const SignUpScreen = () => {
           {/* Continue button */}
           <TouchableOpacity
             className="w-full bg-bold-green rounded-full px-4 py-5 flex items-center justify-center"
-            onPress={createAccount}
+            onPress={signInUser}
           >
-            <Text className="font-dmSans font-medium text-base tracking-widest text-primary-dark">
+            <Text className="font-dmSans font-bold text-base tracking-widest text-primary-dark">
               Continue
             </Text>
           </TouchableOpacity>

@@ -32,7 +32,7 @@ const AuthRoutesLayout = () => {
           headerStyle: {
             backgroundColor: '#202020'
           },
-          gestureEnabled: false
+          gestureEnabled: true
         }}
       />
       <Stack.Screen name="sign-up" options={{ headerShown: false }} />

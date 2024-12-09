@@ -71,7 +71,7 @@ const InitialLayout = () => {
   useEffect(() => {
     if (!isLoaded) return;
     const inHomeGroup = segments[0] === '(home)'
-    // console.log('use effect - segments : ', segments)
+    console.log('use effect - segments : ', segments)
     // console.log('use effect - isHomeGroup : ', inHomeGroup)
     // console.log('use effect - isSignedIn : ', isSignedIn)
     if(isSignedIn && !inHomeGroup) {
@@ -96,6 +96,7 @@ const InitialLayout = () => {
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen name="(home)" options={{ headerShown: false }} />
     </Stack>
   );
 };
