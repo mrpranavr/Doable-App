@@ -6,10 +6,11 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        dmSans: {
-          regular: 'DMSans-Regular',
-          bold: 'DMSans-Bold',
-        }
+        dmSansRegular: ['DMSans-Regular'],
+        dmSansBold: ['DMSans-Bold'],
+        helvetica: ['Helvetica'],
+        helveticaLight: ['Helvetica-Light'],
+        helveticaBold: ['Helvetica-Bold']
       },
       colors: {
         primary: {
@@ -23,7 +24,8 @@ module.exports = {
           orange: '#FEA67D'
         },
         secondary: {
-          white: '#FFFFFF'
+          white: '#FFFFFF',
+          lightWhite: '#A0A0A0'
         }
       }
     },

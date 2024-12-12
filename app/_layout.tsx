@@ -15,7 +15,7 @@ const tokenCache = {
     try {
       const item = await SecureStore.getItemAsync(key);
       if (item) {
-        console.log(`${key} was used 🔐 \n`);
+        // console.log(`${key} was used 🔐 \n`);
       } else {
         console.log("No values stored under key: " + key);
       }
@@ -48,7 +48,10 @@ const InitialLayout = () => {
   // Loading fonts
   const [fontsLoaded, error] = useFonts({
     'DMSans-Regular': require('../assets/fonts/DMSans-Regular.ttf'),
-    'DMSans-Bold': require('../assets/fonts/DMSans-Bold.ttf')
+    'DMSans-Bold': require('../assets/fonts/DMSans-Bold.ttf'),
+    'Helvetica': require('../assets/fonts/Helvetica.ttf'),
+    'Helvetiva-Light': require('../assets/fonts/helvetica-light.ttf'),
+    'Helvetiva-Bold': require('../assets/fonts/Helvetica-Bold.ttf'),
   });
 
   const { isLoaded, isSignedIn } = useAuth();
@@ -71,7 +74,7 @@ const InitialLayout = () => {
   useEffect(() => {
     if (!isLoaded) return;
     const inHomeGroup = segments[0] === '(home)'
-    console.log('use effect - segments : ', segments)
+    // console.log('use effect - segments : ', segments)
     // console.log('use effect - isHomeGroup : ', inHomeGroup)
     // console.log('use effect - isSignedIn : ', isSignedIn)
     if(isSignedIn && !inHomeGroup) {
