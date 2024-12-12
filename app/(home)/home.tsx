@@ -66,15 +66,6 @@ const HomeScreen = () => {
     }
   };
 
-
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-    } catch (error: any) {
-      alert(error.message);
-    }
-  };
-
   const router = useRouter();
 
   const handleUserModalOpen = () => {
@@ -86,6 +77,7 @@ const HomeScreen = () => {
     setSelectedPage(
       NavigationHeaders.find((header) => header.title === title)!.title
     );
+
   };
 
   return (
@@ -117,7 +109,7 @@ const HomeScreen = () => {
             </TouchableOpacity>
           )}
 
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={() => router.push("/addTask")}>
             <Ionicons name="add-outline" size={42} color="white" />
           </TouchableOpacity>
         </View>
@@ -180,7 +172,6 @@ const HomeScreen = () => {
           />
         </View>
       </SafeAreaView>
-      <Button title="Sign Out" onPress={handleSignOut} />
     </View>
   );
 };
