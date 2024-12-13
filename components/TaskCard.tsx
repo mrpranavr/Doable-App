@@ -4,6 +4,7 @@ import { Task } from "@/constants/Types";
 import { CardColors } from "@/constants/GlobalData";
 import { mockTasks } from "@/constants/MockData";
 import { getDatePart } from "@/helper/helperFunction";
+import { useRouter } from "expo-router";
 
 export type TaskCardProps = {
   task: Task;
@@ -11,6 +12,8 @@ export type TaskCardProps = {
 
 const TaskCard = ({ task }: TaskCardProps) => {
   const [numberOfSubTasks, setNumberOfSubTasks] = useState(0)
+  const router = useRouter();
+
   const randomColor = () => {
     if (!Array.isArray(CardColors) || CardColors.length === 0) {
       return "#FEF752";
@@ -26,11 +29,21 @@ const TaskCard = ({ task }: TaskCardProps) => {
     setNumberOfSubTasks(subTasks.length)
   }, [])
 
+  const handleGroupTaskTransition = () => {
+    router.push({
+      pathname: '/(home)/(task)/[groupTask]',
+      params: {
+        groupTask: task.id,
+      }
+    })
+  }
+
   return (
     <TouchableOpacity
       className={`w-full rounded-[20px] flex-row px-3 py-5 gap-6 justify-center items-center`}
       style={{ backgroundColor: randomColor() }}
       activeOpacity={1}
+      onPress={handleGroupTaskTransition}
     >
       <View className="flex items-center gap-2">
         <View className="items-center">
