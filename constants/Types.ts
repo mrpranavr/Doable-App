@@ -1,14 +1,16 @@
 
-export type TaskStatus = 'incomplete' | 'complete' | 'overdue'
+export type TaskStatus = 'Incomplete' | 'Complete' | 'Overdue'
 
-export type TaskType = 'Group' | 'Quick Task'
+export type TaskType = 'Group' | 'Individual'
 
 export type Task = {
   id: string,
   title: string,
-  tasksToComplete?: number,
   startDate: number,
   endDate: number,
   status: TaskStatus,
-  type: TaskType
+  type: TaskType,
+  description?: string,
+  user_id: string,
+  parent_task?: string
 }

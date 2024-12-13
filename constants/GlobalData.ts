@@ -1,7 +1,7 @@
 import { TaskType } from "./Types";
 
 export type NavigationHeaderType = {
-  title: string;
+  title: 'Groups' | 'Individual' | 'Pending';
 };
 
 export const NavigationHeaders: Array<NavigationHeaderType> = [
@@ -9,7 +9,7 @@ export const NavigationHeaders: Array<NavigationHeaderType> = [
     title: "Groups",
   },
   {
-    title: "Quick Tasks",
+    title: "Individual",
   },
   {
     title: "Pending",

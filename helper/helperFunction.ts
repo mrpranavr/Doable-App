@@ -19,3 +19,25 @@ export const formatDateToDayDateMonth = () => {
 
   return `${dayName} ${dayNumber} · ${monthAbbr}`;
 }
+
+
+export function getDatePart(
+  timestamp: number,
+  part: 'day' | 'month' | 'year',
+  abbr: boolean = false
+): string | number {
+  const date = new Date(timestamp);
+
+  switch (part) {
+    case 'day':
+      return date.getDate();
+    case 'month':
+      const month = date.toLocaleString('default', { month: abbr ? 'short' : 'long' });
+      return month;
+    case 'year':
+      const year = abbr ? date.getFullYear().toString().slice(-2) : date.getFullYear();
+      return year;
+    default:
+      throw new Error("Invalid part specified. Use 'day', 'month', or 'year'.");
+  }
+}

@@ -7,15 +7,17 @@ import {
   ScrollView,
   FlatList,
 } from "react-native";
-import React, { useRef, useState } from "react";
-import { useClerk, useUser } from "@clerk/clerk-expo";
+import React, { useEffect, useRef, useState } from "react";
+import { useAuth, useClerk, useUser } from "@clerk/clerk-expo";
 import { Stack, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import {formatDateToDayDateMonth, getInitials } from "@/helper/helperFunction";
+import { formatDateToDayDateMonth, getInitials } from "@/helper/helperFunction";
 import { NavigationHeaders } from "@/constants/GlobalData";
-import { mockGroupTasks } from "@/constants/MockData";
+import { mockTasks } from "@/constants/MockData";
 import TaskCard from "@/components/TaskCard";
+import { getSupabaseClient } from "@/utils/supabase";
+import { Task } from "@/constants/Types";
 
 type NavigationTextProps = {
   title: string;
@@ -44,7 +46,52 @@ const NavigationText = ({
 const HomeScreen = () => {
   // CLERK COMPONENTS
   const { signOut } = useClerk();
+  const { getToken } = useAuth();
   const { isLoaded, isSignedIn, user } = useUser();
+  // const client = getSupabaseClient()
+  const [tasksData, setTasksData] = useState<Task[]>([]);
+  const [selectedPage, setSelectedPage] = useState(NavigationHeaders[0].title);
+
+  useEffect(() => {
+    // const fetchTasks = async () => {
+    //   try {
+    //     const supabase = await getSupabaseClient(getToken);
+    //     const { data, error } = await supabase.from('Tasks').select('*').eq('status', 'Completed'); // Replace 'tasks' with your table name
+
+    //     if (error) {
+    //       console.error('Error fetching tasks:', error);
+    //     } else {
+    //       console.log('Tasks fetched successfully:', data);
+    //     }
+    //   } catch (err) {
+    //     console.error('Unexpected error:', err);
+    //   } finally {
+    //     // setLoading(false);
+    //   }
+    // };
+
+    // fetchTasks();
+    let data: Task[] = mockTasks.filter((task: Task) => task.type === "Group");
+
+    switch (selectedPage) {
+      case "Groups":
+        data = mockTasks.filter((task: Task) => task.type === "Group");
+        break;
+      case "Individual":
+        data = mockTasks.filter((task: Task) => task.type === "Individual");
+        break;
+      case "Pending":
+        data = mockTasks.filter(
+          (task: Task) =>
+            task.status === "Incomplete" || task.status === "Overdue"
+        );
+        break;
+      default:
+        break;
+    }
+
+    setTasksData(data);
+  }, [selectedPage]);
 
   if (!isLoaded) {
     // Oops issue component here
@@ -52,9 +99,7 @@ const HomeScreen = () => {
   }
 
   // PAGE PROPERTIES HERE
-  const [selectedPage, setSelectedPage] = useState(NavigationHeaders[0].title);
   const navigationScrollRef = useRef<ScrollView>(null);
-
 
   const snapToItem = (index: number) => {
     if (navigationScrollRef.current) {
@@ -77,7 +122,6 @@ const HomeScreen = () => {
     setSelectedPage(
       NavigationHeaders.find((header) => header.title === title)!.title
     );
-
   };
 
   return (
@@ -135,7 +179,7 @@ const HomeScreen = () => {
                 title={header.title}
                 onPress={(title) => {
                   handleNavigationChange(title);
-                  snapToItem(index)
+                  snapToItem(index);
                 }}
                 isSelected={header.title === selectedPage}
               />
@@ -159,14 +203,14 @@ const HomeScreen = () => {
               ))
             }
           </ScrollView> */}
-          <FlatList 
-            data={mockGroupTasks.filter((task) => task.type === 'Group')}
-            renderItem={({item}) => <TaskCard task={item} />}
+          <FlatList
+            data={tasksData}
+            renderItem={({ item }) => <TaskCard task={item} />}
             keyExtractor={(item) => item.id}
             scrollEventThrottle={16}
             contentContainerStyle={{
               rowGap: 10,
-              paddingBottom: 300
+              paddingBottom: 300,
             }}
             showsVerticalScrollIndicator={false}
           />
