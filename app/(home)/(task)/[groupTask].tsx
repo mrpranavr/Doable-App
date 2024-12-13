@@ -17,6 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Task } from "@/constants/Types";
 import { mockTasks } from "@/constants/MockData";
 import SubTaskCard from "@/components/subtaskCard";
+import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 
 const filterAction = [
   {
@@ -41,6 +42,8 @@ const GroupTaskScreen = () => {
   const [subTasks, setSubTasks] = useState<Task[]>([]);
   const [totalSubTasks, setTotalSubTasks] = useState(0);
   const [completedSubTasksCount, setCompletedSubTasksCount] = useState(0);
+
+  const translateY = useSharedValue(0)
  
   useEffect(() => {
     // Collect the task data from database
@@ -73,6 +76,10 @@ const GroupTaskScreen = () => {
 
     setSubTasks(dataToShow);
   }, [filterType]);
+
+  const scrollHandler = useAnimatedScrollHandler((event) => {
+    translateY.value = event.contentOffset.y
+  })
 
   return (
     <View className="relative w-full flex-1 bg-primary-dark">
@@ -107,6 +114,7 @@ const GroupTaskScreen = () => {
               <TouchableOpacity
                 onPress={() => setFilterType(item)}
                 activeOpacity={1}
+                key={index}
               >
                 <Text
                   className={`text-[20px] uppercase tracking-widest font-helvetica ${
@@ -123,9 +131,9 @@ const GroupTaskScreen = () => {
         </View>
 
         <View className="w-full mt-7 flex-1">
-          <FlatList
+          <Animated.FlatList
             data={subTasks}
-            renderItem={({ item }) => <SubTaskCard task={item} />}
+            renderItem={({ item, index }) => <SubTaskCard task={item} translateY={translateY} index={index} />}
             keyExtractor={(item) => item.id}
             contentContainerStyle={{
               // flex: 1,
@@ -136,6 +144,10 @@ const GroupTaskScreen = () => {
               // flexDirection: 'column',
               flexGrow: 1
             }}
+            bounces={false}
+            onScroll={scrollHandler}
+            scrollEventThrottle={16}
+            showsVerticalScrollIndicator={false}
           />
         </View>
       </SafeAreaView>
