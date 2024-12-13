@@ -1,3 +1,14 @@
+import { CardColors } from "@/constants/GlobalData";
+
+export const randomColor = () => {
+    if (!Array.isArray(CardColors) || CardColors.length === 0) {
+      return "#FEF752";
+    }
+
+    const randomIndex = Math.floor(Math.random() * CardColors.length);
+    return CardColors[randomIndex];
+  };
+
 
 export function getInitials(firstName: string | undefined | null, lastName: string | undefined | null) {
   if (!firstName || !lastName) {

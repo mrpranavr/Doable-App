@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Task } from "@/constants/Types";
 import { CardColors } from "@/constants/GlobalData";
 import { mockTasks } from "@/constants/MockData";
-import { getDatePart } from "@/helper/helperFunction";
+import { getDatePart, randomColor } from "@/helper/helperFunction";
 import { useRouter } from "expo-router";
 
 export type TaskCardProps = {
@@ -14,14 +14,7 @@ const TaskCard = ({ task }: TaskCardProps) => {
   const [numberOfSubTasks, setNumberOfSubTasks] = useState(0)
   const router = useRouter();
 
-  const randomColor = () => {
-    if (!Array.isArray(CardColors) || CardColors.length === 0) {
-      return "#FEF752";
-    }
-
-    const randomIndex = Math.floor(Math.random() * CardColors.length);
-    return CardColors[randomIndex];
-  };
+  
 
   useEffect(() => {
     // get the child tasks count

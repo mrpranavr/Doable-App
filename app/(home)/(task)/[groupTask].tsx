@@ -16,6 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { Task } from "@/constants/Types";
 import { mockTasks } from "@/constants/MockData";
+import SubTaskCard from "@/components/subtaskCard";
 
 const filterAction = [
   {
@@ -38,41 +39,39 @@ const GroupTaskScreen = () => {
 
   const [filterType, setFilterType] = useState(filterAction[0]);
   const [subTasks, setSubTasks] = useState<Task[]>([]);
-
+  const [totalSubTasks, setTotalSubTasks] = useState(0);
+  const [completedSubTasksCount, setCompletedSubTasksCount] = useState(0);
+ 
   useEffect(() => {
     // Collect the task data from database
     const currentTask = mockTasks.find((task) => task.id === groupTask);
     // Collect all the subtasts of this group task from database
 
-    let retrievedSubTasks = mockTasks.filter(
-      (task) =>
-        task.parent_task === groupTask
+    const allSubTasks = mockTasks.filter(
+      (task) => task.parent_task === groupTask
     );
+    setTotalSubTasks(allSubTasks.length)
+
+    let dataToShow = allSubTasks
+
+    const completedSubTasks = allSubTasks.filter((task) => task.status === 'Complete')
+    setCompletedSubTasksCount(completedSubTasks.length)
 
     switch (filterType.value) {
       case "All":
-        retrievedSubTasks = mockTasks.filter(
-          (task) =>
-            task.parent_task === groupTask
-        );
+        dataToShow = allSubTasks
         break;
       case "Active":
-        retrievedSubTasks = mockTasks.filter(
-          (task) =>
-            task.parent_task === groupTask && (task.status === 'Incomplete' || task.status === 'Overdue')
-        );
+        dataToShow = allSubTasks.filter((task) => (task.status === "Incomplete" || task.status === "Overdue"))
         break;
-      case 'Done':
-        retrievedSubTasks = mockTasks.filter(
-          (task) =>
-            task.parent_task === groupTask && task.status === 'Complete'
-        );
+      case "Done":
+        dataToShow = allSubTasks.filter((task) => task.status === "Complete")
         break;
       default:
         break;
     }
 
-    setSubTasks(retrievedSubTasks);
+    setSubTasks(dataToShow);
   }, [filterType]);
 
   return (
@@ -82,20 +81,23 @@ const GroupTaskScreen = () => {
         style={{ width: "100%", height: "100%" }}
         className="absolute"
       />
-      <SafeAreaView className="px-4 flex items-center w-full">
+      <SafeAreaView
+        className="flex-1 items-center w-full"
+        edges={["top", "left", "right"]}
+      >
         {/* Header Nav and overview */}
-        <View className="flex-row justify-between items-center w-full">
+        <View className="flex-row justify-between items-center w-full px-4">
           <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={35} color="#fff" />
           </TouchableOpacity>
           <View className="px-6 py-2 rounded-[18px] bg-transparent border-white border-[1px]">
             <Text className="text-[20px] font-helvetica text-secondary-white">
-              2/15
+              {completedSubTasksCount}/{totalSubTasks}
             </Text>
           </View>
         </View>
 
-        <View className="mt-7 gap-7">
+        <View className="mt-7 gap-7 px-4">
           <Text className=" font-helvetica text-[96px] tracking-widest text-secondary-white">
             TASKS
           </Text>
@@ -120,16 +122,24 @@ const GroupTaskScreen = () => {
           </View>
         </View>
 
-        <FlatList
-          data={subTasks}
-          renderItem={({ item }) => (
-            <View>
-              <Text>{item.title}</Text>
-            </View>
-          )}
-        />
+        <View className="w-full mt-7 flex-1">
+          <FlatList
+            data={subTasks}
+            renderItem={({ item }) => <SubTaskCard task={item} />}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{
+              // flex: 1,
+              paddingTop: 50,
+              paddingBottom: 140,
+              // paddingTop: 50
+              justifyContent: 'flex-end',
+              // flexDirection: 'column',
+              flexGrow: 1
+            }}
+          />
+        </View>
       </SafeAreaView>
-      
+
       {/* CREATE SUB TASKS BUTTON */}
       <View className="absolute bottom-0 w-full px-4">
         <TouchableOpacity
