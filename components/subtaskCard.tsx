@@ -8,6 +8,7 @@ import Animated, {
   interpolate,
   useAnimatedStyle,
 } from "react-native-reanimated";
+import { useRouter } from "expo-router";
 
 type SubTaskCardProps = {
   task: Task;
@@ -19,6 +20,8 @@ const CARD_SIZE = 150;
 
 const SubTaskCard = ({ task, translateY, index }: SubTaskCardProps) => {
   // console.log(index)
+
+  const router = useRouter()
 
   const rStyle = useAnimatedStyle(() => {
 
@@ -53,24 +56,42 @@ const SubTaskCard = ({ task, translateY, index }: SubTaskCardProps) => {
     };
   }, [index]);
 
+  const color = randomColor();
+
+  const handleOpenTask = () => {
+    router.push({
+      pathname: '/(home)/(task)/taskDetail/[taskId]',
+      params: {
+        taskId: task.title,
+        taskColor: color
+      }
+    })
+  }
+
   return (
     <Animated.View
       className={`w-full rounded-[40px] px-4 py-5 pb-[150px] -mb-[150px]`}
-      style={[{ backgroundColor: randomColor() }, rStyle]}
+      style={[{ backgroundColor: color }, rStyle]}
     >
       {/* Header section */}
       <View className="flex-row w-full justify-between items-center mb-4">
-        <TouchableOpacity className="rounded-[12px] border-black border-[2px] w-[37px] h-[30px]">
-          <View className="hidden"></View>
+        <TouchableOpacity className="rounded-[12px] border-black border-[2px] w-[37px] h-[30px] items-center justify-center">
+          {
+            task.status === 'Complete'? (
+              <Ionicons name="checkmark" color="black" size={20} />
+            ) : (
+              <View className="hidden"></View>
+            )
+          }
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity onPress={handleOpenTask}>
           <Ionicons name="open-outline" color="black" size={34} />
         </TouchableOpacity>
       </View>
-      <Text className="font-helvetica text-[40px] uppercase text-black">
+      <Animated.Text className={`font-helvetica text-[40px] uppercase text-black ${task.status === 'Complete' ? 'line-through text-gray-800' : ''}`} sharedTransitionTag="taskCard">
         {task.title}
-      </Text>
+      </Animated.Text>
     </Animated.View>
   );
 };

@@ -11,7 +11,8 @@ export default function Layout() {
     <Stack>
       <Stack.Screen name="home" options={{ headerShown: false }} />
       <Stack.Screen name="userModal" options={{ headerShown: false, presentation: 'modal' }} />
-      <Stack.Screen name="(task)" options={{ headerShown: false }} />
+      <Stack.Screen name="(task)/[groupTask]" options={{ headerShown: false }} />
+      <Stack.Screen name="(task)/taskDetail/[taskId]" options={{ headerShown: false }} />
       <Stack.Screen name="addTask" 
         options={{
           presentation: "modal",
