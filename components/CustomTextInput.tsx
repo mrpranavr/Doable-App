@@ -5,13 +5,18 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import DatePicker from "react-native-date-picker";
 
 export type CustomTextInputProps = {
   type: string;
   placeholder: string;
   value: string;
-  onChange: (value: string) => void;
+  onChange: (value: string | Date) => void;
   hasError: boolean;
+  dateValue?: Date;
+  openDatePicker?: boolean;
+  onCancelPicker?: () => void;
+  onPress?: () => void;
 };
 
 const CustomTextInput = ({
@@ -20,8 +25,15 @@ const CustomTextInput = ({
   value,
   onChange,
   hasError,
+  dateValue,
+  openDatePicker,
+  onCancelPicker,
+  onPress,
 }: CustomTextInputProps) => {
   let keyboardType: KeyboardTypeOptions = "default";
+
+  const [height, setHeight] = useState(53);
+  const textInputRef = React.useRef<TextInput>(null);
 
   switch (type) {
     case "email":
@@ -42,8 +54,15 @@ const CustomTextInput = ({
 
   const handleTextInputBlurred = () => {
     if (!value) {
+      console.log("date value --> ", value);
       focusedSharedValue.value = false;
+      if (type === "date") onCancelPicker && onCancelPicker();
     }
+  };
+
+  const handleDateInputFocused = () => {
+    focusedSharedValue.value = true;
+    onPress && onPress();
   };
 
   const rLabelStyle = useAnimatedStyle(() => {
@@ -74,49 +93,70 @@ const CustomTextInput = ({
   const rTextContainerStyle = useAnimatedStyle(() => {
     return {
       bottom: focusedSharedValue.value
-        ? withTiming(-10, { duration: 150 })
+        ? withTiming(-13, { duration: 150 })
         : withTiming(0, { duration: 150 }),
     };
   }, []);
 
   const rOuterContainerStyle = useAnimatedStyle(() => {
     return {
-      padding: hasError ? withTiming(2, { duration: 150 }): withTiming(0, { duration: 150 }),
-      borderColor: hasError ? withTiming("#e63946", {duration: 150}) : withTiming("transparent", {duration: 150}),
-      borderWidth: hasError ? withTiming(3, {duration: 150}) : withTiming(0, {duration: 150}),
-      borderRadius: withTiming(15, {duration: 150}),
-    }
+      padding: hasError
+        ? withTiming(2, { duration: 150 })
+        : withTiming(0, { duration: 150 }),
+      borderColor: hasError
+        ? withTiming("#e63946", { duration: 150 })
+        : withTiming("transparent", { duration: 150 }),
+      borderWidth: hasError
+        ? withTiming(3, { duration: 150 })
+        : withTiming(0, { duration: 150 }),
+      borderRadius: withTiming(15, { duration: 150 }),
+    };
   }, [hasError]);
 
   return (
-    <Animated.View className="relative" style={rOuterContainerStyle}>
+    <Animated.View className="relative w-full" style={rOuterContainerStyle}>
       <Animated.View
-        className="flex-row items-center bg-primary-light rounded-xl px-4 py-5 w-full relative z-10"
+        className=" bg-primary-light rounded-xl px-4 py-5 w-full relative z-10"
         style={rContainerStyle}
       >
         <Animated.Text
-          className="absolute left-4 text-[#A0A0A0] font-dmSans tracking-widest"
-          style={[rLabelStyle, {fontFamily: 'DMSans-Regular'}]}
+          className="absolute left-4 z-1 text-[#A0A0A0] font-dmSans tracking-widest"
+          style={[rLabelStyle, { fontFamily: "DMSans-Regular" }]}
         >
           {placeholder}
         </Animated.Text>
-        <Animated.View className="w-full" style={rTextContainerStyle}>
+        <Animated.View className="z-10 w-full" style={rTextContainerStyle}>
           <TextInput
-            className="font-dmSans tracking-widest text-secondary-white w-full"
+            ref={textInputRef}
+            className="font-dmSans tracking-widest text-secondary-white"
             value={value}
-            onChangeText={onChange}
+            onChangeText={(value) => {
+              onChange(value);
+            }}
             keyboardType={keyboardType}
-            onFocus={handleTextInputFocused}
+            onFocus={
+              type === "date" ? handleDateInputFocused : handleTextInputFocused
+            }
             onBlur={handleTextInputBlurred}
             secureTextEntry={type === "password"}
-            style={{fontFamily: 'DMSans-Regular'}}
+            style={{ fontFamily: "DMSans-Regular"}}
+            onPress={type === "date" ? handleDateInputFocused : () => {}}
+            editable={type === "date" ? false : true}
+            numberOfLines={2}
+            textAlignVertical="top"
           />
+          {type === "date" && (
+            <DatePicker
+              modal
+              mode="datetime"
+              open={openDatePicker}
+              date={dateValue!}
+              onConfirm={onChange}
+              onCancel={handleTextInputBlurred}
+            />
+          )}
         </Animated.View>
       </Animated.View>
-
-      {/* <Animated.View className="absolute top-0 left-0 w-full bg-red-600 rounded-xl z-[1] justify-end" style={rErrorContainerStyle}>
-        <Text className="text-secondary-white font-dmSans tracking-widest text-sm">Has Error</Text>
-      </Animated.View> */}
     </Animated.View>
   );
 };

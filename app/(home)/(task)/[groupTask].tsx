@@ -153,19 +153,19 @@ const GroupTaskScreen = () => {
       </SafeAreaView>
 
       {/* CREATE SUB TASKS BUTTON */}
-      <View className="absolute bottom-0 w-full px-4">
+      <View className="absolute bottom-4 w-full px-4">
         <TouchableOpacity
-          className=" bottom-8 w-full flex-row items-center justify-center gap-[4px]"
+          className=" bottom-0 w-full flex-row items-center justify-center gap-[4px]"
           activeOpacity={1}
           onPress={() => router.push("/addTask")}
         >
-          <View className="flex-row p-8 bg-black rounded-l-[40px]">
+          <View className="flex-row p-8 bg-black rounded-l-[40px] flex-1">
             <Text className="font-helvetica text-[20px] uppercase text-secondary-white">
               Create new subtask
             </Text>
           </View>
 
-          <View className="py-[19.5px] pl-[10px] pr-[19.5px] bg-black rounded-r-[40px] items-center justify-center">
+          <View className=" py-[19.5px] pl-[10px] pr-[19.5px] bg-black rounded-r-[40px] items-center justify-center">
             <Ionicons name="add" size={40} color="#fff" />
           </View>
         </TouchableOpacity>

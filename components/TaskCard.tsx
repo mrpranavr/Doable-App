@@ -14,7 +14,7 @@ const TaskCard = ({ task }: TaskCardProps) => {
   const [numberOfSubTasks, setNumberOfSubTasks] = useState(0)
   const router = useRouter();
 
-  
+  const bgColor = randomColor()
 
   useEffect(() => {
     // get the child tasks count
@@ -22,21 +22,31 @@ const TaskCard = ({ task }: TaskCardProps) => {
     setNumberOfSubTasks(subTasks.length)
   }, [])
 
-  const handleGroupTaskTransition = () => {
-    router.push({
-      pathname: '/(home)/(task)/[groupTask]',
-      params: {
-        groupTask: task.id,
-      }
-    })
+  const handleGroupTaskTransition = (parentId: string | undefined) => {
+    if(!parentId) {
+      router.push({
+        pathname: '/(home)/(task)/[groupTask]',
+        params: {
+          groupTask: task.id,
+        }
+      })
+    } else {
+      router.push({
+        pathname: '/(home)/(task)/taskDetail/[taskId]',
+        params: {
+          taskId: task.id,
+          taskColor: bgColor
+        }
+      })
+    }
   }
 
   return (
     <TouchableOpacity
       className={`w-full rounded-[20px] flex-row px-3 py-5 gap-6 justify-center items-center`}
-      style={{ backgroundColor: randomColor() }}
+      style={{ backgroundColor: bgColor }}
       activeOpacity={1}
-      onPress={handleGroupTaskTransition}
+      onPress={() => handleGroupTaskTransition(task.parent_task)}
     >
       <View className="flex items-center gap-2">
         <View className="items-center">
