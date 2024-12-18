@@ -1,5 +1,5 @@
 import { View, Text, TextInput, KeyboardTypeOptions } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -17,6 +17,7 @@ export type CustomTextInputProps = {
   openDatePicker?: boolean;
   onCancelPicker?: () => void;
   onPress?: () => void;
+  editable?: boolean;
 };
 
 const CustomTextInput = ({
@@ -29,6 +30,7 @@ const CustomTextInput = ({
   openDatePicker,
   onCancelPicker,
   onPress,
+  editable,
 }: CustomTextInputProps) => {
   let keyboardType: KeyboardTypeOptions = "default";
 
@@ -64,6 +66,12 @@ const CustomTextInput = ({
     focusedSharedValue.value = true;
     onPress && onPress();
   };
+
+  useEffect(() => {
+    if (value) {
+      focusedSharedValue.value = true;
+    }
+  }, [])
 
   const rLabelStyle = useAnimatedStyle(() => {
     return {
@@ -141,7 +149,7 @@ const CustomTextInput = ({
             secureTextEntry={type === "password"}
             style={{ fontFamily: "DMSans-Regular"}}
             onPress={type === "date" ? handleDateInputFocused : () => {}}
-            editable={type === "date" ? false : true}
+            editable={editable}
             numberOfLines={2}
             textAlignVertical="top"
           />

@@ -41,7 +41,7 @@ const TaskDetailScreen = () => {
         <View className="mt-7 gap-7 px-4 w-full">
           <Animated.Text
             className=" font-helvetica text-[40px] tracking-widest text-black uppercase"
-
+            sharedTransitionTag={`task-title-${taskId}`}
             // entering={FadeInLeft.duration(400).delay(500)}
           >
             {taskId}

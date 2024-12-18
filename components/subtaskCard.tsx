@@ -89,7 +89,11 @@ const SubTaskCard = ({ task, translateY, index }: SubTaskCardProps) => {
           <Ionicons name="open-outline" color="black" size={34} />
         </TouchableOpacity>
       </View>
-      <Animated.Text className={`font-helvetica text-[40px] uppercase text-black ${task.status === 'Complete' ? 'line-through text-gray-800' : ''}`} sharedTransitionTag='Tag1'>
+      
+      <Animated.Text 
+        className={`font-helvetica text-[40px] uppercase text-black ${task.status === 'Complete' ? 'line-through text-gray-800' : ''}`} 
+        sharedTransitionTag={`task-title-${task.title}`}
+      >
         {task.title}
       </Animated.Text>
     </Animated.View>
