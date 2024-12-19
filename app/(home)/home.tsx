@@ -133,12 +133,12 @@ const HomeScreen = () => {
       />
       <SafeAreaView className="px-4 flex items-center w-full">
         {/* User Avatar and add task button */}
-        <View className="flex-row justify-between items-center w-full">
-          {user?.hasImage ? (
-            <TouchableOpacity onPress={handleUserModalOpen}>
+        <View className="flex-row justify-between  items-center w-full">
+          {user?.imageUrl ? (
+            <TouchableOpacity onPress={handleUserModalOpen} className="bg-gray-300 rounded-full">
               <Image
                 source={{ uri: user?.imageUrl }}
-                style={{ width: 52 }}
+                style={{ width: 52, height: 52 }}
                 className="rounded-full"
               />
             </TouchableOpacity>

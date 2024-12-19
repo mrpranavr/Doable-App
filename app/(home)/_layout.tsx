@@ -20,6 +20,33 @@ export default function Layout() {
             </TouchableOpacity>
           ),
           headerRight: () => (
+            <TouchableOpacity onPress={() => router.push("/editUserModal")}>
+              <Ionicons name="pencil" size={23} color="white" />
+            </TouchableOpacity>
+          ),
+          title: "",
+          headerShadowVisible: false,
+          headerTitleStyle: {
+            color: "white",
+            fontFamily: "DMSans-Bold",
+            fontSize: 20,
+          },
+          headerStyle: {
+            backgroundColor: "#202020",
+          },
+        }}
+      />
+      <Stack.Screen
+        name="editUserModal"
+        options={{
+          headerShown: true,
+          presentation: "modal",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons name="close-circle" size={28} color="white" />
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
             <TouchableOpacity onPress={() => router.back()}>
               <Ionicons name="pencil" size={23} color="white" />
             </TouchableOpacity>

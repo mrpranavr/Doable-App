@@ -18,13 +18,28 @@ const AddTaskScreen = () => {
 
   const handleStartDateChange = (date: Date | string) => {
     setStartDate(date as Date);
-    setDateStringValue(date.toString());
+    const formattedDate = (date as Date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    setDateStringValue(formattedDate);
     setOpen(false);
   };
+
   const handleEndDateChange = (date: Date | string) => {
     setEndDate(date as Date);
-    setEndDateStringValue(date.toString());
-    setOpen(false);
+    const formattedDate = (date as Date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric', 
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    setEndDateStringValue(formattedDate);
+    setOpenEndDatePicker(false);
   };
 
   const handleStartDateClose = () => {
@@ -87,6 +102,7 @@ const AddTaskScreen = () => {
               openDatePicker={open}
               onCancelPicker={handleStartDateClose}
               onPress={handleOpenStartDatePicker}
+              editable={false}
             />
           </View>
           <CustomTextInput
@@ -99,6 +115,7 @@ const AddTaskScreen = () => {
             openDatePicker={openEndDatePicker}
             onCancelPicker={handleEndDateClose}
             onPress={handleOpenEndDatePicker}
+            editable={false}
           />
         </View>
       </ScrollView>

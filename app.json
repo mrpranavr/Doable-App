@@ -14,7 +14,12 @@
     "ios": {
       "supportsTablet": false,
       "usesAppleSignIn": true,
-      "bundleIdentifier": "com.anonymous.Doable"
+      "bundleIdentifier": "com.anonymous.Doable",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app requires access to the camera to take photos.",
+        "NSPhotoLibraryUsageDescription": "This app requires access to your photo library to select photos.",
+        "NSPhotoLibraryAddUsageDescription": "This app needs permission to save photos to your photo library."
+      }
     },
     "android": {
       "adaptiveIcon": {
