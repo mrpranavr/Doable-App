@@ -14,6 +14,7 @@ const UserModal = () => {
     user?.emailAddresses[0]?.emailAddress || ""
   );
   const [lastName, setLastName] = useState(user?.lastName || "");
+  const [avatarUrl, setAvatarUrl] = useState(user?.imageUrl || "");
 
   // Re-render component when screen comes into focus
   useFocusEffect(
@@ -23,6 +24,7 @@ const UserModal = () => {
         setFirstName(user.firstName || "");
         setLastName(user.lastName || "");
         setEmail(user.emailAddresses[0]?.emailAddress || "");
+        setAvatarUrl(user.imageUrl || "");
       }
       
       // Re-render on component mount and screen focus
