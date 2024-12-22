@@ -4,6 +4,7 @@ import { useClerk } from "@clerk/clerk-expo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomTextInput from "@/components/CustomTextInput";
 import { useFocusEffect, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 const UserModal = () => {
   const { signOut, user } = useClerk();
@@ -120,12 +121,13 @@ const UserModal = () => {
         </View>
       </ScrollView>
       <TouchableOpacity
-        className="w-full bg-bold-green rounded-full px-4 py-5 flex items-center justify-center"
+        className="w-full bg-bold-red rounded-full px-4 py-5 flex-row items-center justify-center"
         onPress={handleSignOut}
       >
-        <Text className="font-dmSansBold font-bold text-base tracking-widest text-primary-dark">
+        <Text className="font-dmSansBold font-bold text-base tracking-widest text-secondary-white mr-2">
           Log out
         </Text>
+        <Ionicons name="log-out-outline" size={20} color="white" />
       </TouchableOpacity>
     </View>
   );

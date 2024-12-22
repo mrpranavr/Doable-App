@@ -86,27 +86,27 @@ const NewUserSignUpScreen = () => {
 
 
   // Text input change handlers
-  const handleFirstNameChange = (text: string) => {
+  const handleFirstNameChange = (text: string | any) => {
     setFirstName(text);
     setFirstNameError(false);
   }
 
-  const handleLastNameChange = (text: string) => {
+  const handleLastNameChange = (text: string | any) => {
     setLastName(text);
     setLastNameError(false);
   }
 
-  const handleUsernameChange = (text: string) => {
+  const handleUsernameChange = (text: string | any) => {
     setUsername(text);
     setUsernameError(false);
   }
 
-  const handleEmailChange = (text: string) => {
+  const handleEmailChange = (text: string | any) => {
     setEmail(text);
     setEmailError(false);
   }
 
-  const handlePasswordChange = (text: string) => {
+  const handlePasswordChange = (text: string | any) => {
     setPassword(text);
     setPasswordError(false);
   }
@@ -114,7 +114,7 @@ const NewUserSignUpScreen = () => {
   return (
     <View className="bg-primary-dark flex-1 items-center pt-5 px-4 gap-2 justify-between pb-14">
       {loading && (
-        <View className="absolute top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center bg-primary-dark">
+        <View className="absolute top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center bg-primary-dark/80">
           <ActivityIndicator size="large" color="#fff" />
         </View>
       )}

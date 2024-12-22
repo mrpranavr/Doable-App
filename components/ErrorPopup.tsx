@@ -44,7 +44,7 @@ export const ErrorPopup = ({
       animationType="fade"
     >
       <Pressable 
-        className="flex-1 justify-center items-center bg-black/50"
+        className="flex-1 justify-center items-center bg-black/80"
         onPress={onClose}
       >
         <Pressable 

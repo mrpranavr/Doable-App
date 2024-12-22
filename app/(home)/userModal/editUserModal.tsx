@@ -185,6 +185,16 @@ const EditUserModal = () => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    try {
+      await user?.delete();
+      router.push("/");
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      alert("Failed to delete account. Please try again.");
+    }
+  };
+
   return (
     <View className="bg-primary-dark flex-1 items-center px-4 gap-2 justify-between pb-14">
       {isLoading && (
@@ -246,14 +256,14 @@ const EditUserModal = () => {
               editable={!isLoading}
             />
 
-            <CustomTextInput
+            {/* <CustomTextInput
               type="email"
               placeholder="Email"
               value={email}
               onChange={(value) => setEmail(value as string)}
               hasError={false}
               editable={false}
-            />
+            /> */}
           </View>
         </View>
       </ScrollView>

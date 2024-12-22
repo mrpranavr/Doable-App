@@ -71,14 +71,16 @@ const HomeScreen = () => {
     // };
 
     // fetchTasks();
-    let data: Task[] = mockTasks.filter((task: Task) => task.type === "Group");
+    let data: Task[] = mockTasks.filter(
+      (task: Task) => task.parent_task == null
+    );
 
     switch (selectedPage) {
-      case "Groups":
-        data = mockTasks.filter((task: Task) => task.type === "Group");
+      case "Tasks":
+        data = mockTasks.filter((task: Task) => task.parent_task == null);
         break;
-      case "Individual":
-        data = mockTasks.filter((task: Task) => task.type === "Individual");
+      case "Overdue":
+        data = mockTasks.filter((task: Task) => task.status === "Overdue");
         break;
       case "Pending":
         data = mockTasks.filter(
@@ -118,7 +120,6 @@ const HomeScreen = () => {
   };
 
   const handleNavigationChange = (title: string) => {
-    console.log(title);
     setSelectedPage(
       NavigationHeaders.find((header) => header.title === title)!.title
     );
@@ -135,7 +136,10 @@ const HomeScreen = () => {
         {/* User Avatar and add task button */}
         <View className="flex-row justify-between  items-center w-full">
           {user?.imageUrl ? (
-            <TouchableOpacity onPress={handleUserModalOpen} className="bg-gray-300 rounded-full">
+            <TouchableOpacity
+              onPress={handleUserModalOpen}
+              className="bg-gray-300 rounded-full"
+            >
               <Image
                 source={{ uri: user?.imageUrl }}
                 style={{ width: 52, height: 52 }}
@@ -189,21 +193,52 @@ const HomeScreen = () => {
 
         {/* Group Tasks Section */}
         <View className="w-full mt-7">
-          {/* <ScrollView
+          <ScrollView
             contentContainerStyle={{
               rowGap: 10,
               // flex: 1
+              paddingBottom: 300,
             }}
             showsVerticalScrollIndicator={false}
             scrollEventThrottle={16}
           >
-            {
-              mockGroupTasks.filter((task) => task.type === 'Group').map((task, index) => (
+            {(selectedPage === "Pending" || selectedPage === "Overdue") && (
+              <>
+                {tasksData.filter((task) => task.parent_task == null).length >
+                  0 && (
+                  <View className="w-full flex justify-center items-center">
+                    <Text className="uppercase text-secondary-lightWhite font-helvetica tracking-wider text-sm">
+                      Group tasks ({tasksData.filter((task) => task.parent_task == null).length})
+                    </Text>
+                  </View>
+                )}
+                {tasksData
+                  .filter((task) => task.parent_task == null)
+                  .map((task, index) => (
+                    <TaskCard key={task.id} task={task} />
+                  ))}
+
+                {tasksData.filter((task) => task.parent_task != null).length >
+                  0 && (
+                  <View className="w-full flex justify-center items-center">
+                    <Text className="uppercase text-secondary-lightWhite font-helvetica tracking-wider text-sm">
+                      Sub tasks ({tasksData.filter((task) => task.parent_task != null).length})
+                    </Text>
+                  </View>
+                )}
+                {tasksData
+                  .filter((task) => task.parent_task != null)
+                  .map((task, index) => (
+                    <TaskCard key={task.id} task={task} />
+                  ))}
+              </>
+            )}
+            {selectedPage === "Tasks" &&
+              tasksData.map((task, index) => (
                 <TaskCard key={task.id} task={task} />
-              ))
-            }
-          </ScrollView> */}
-          <FlatList
+              ))}
+          </ScrollView>
+          {/* <FlatList
             data={tasksData}
             renderItem={({ item }) => <TaskCard task={item} />}
             keyExtractor={(item) => item.id}
@@ -213,7 +248,7 @@ const HomeScreen = () => {
               paddingBottom: 300,
             }}
             showsVerticalScrollIndicator={false}
-          />
+          /> */}
         </View>
       </SafeAreaView>
     </View>

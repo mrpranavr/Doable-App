@@ -69,10 +69,10 @@ const TaskCard = ({ task }: TaskCardProps) => {
         </Text>
         <View className="flex-row w-full gap-4">
           <Text className="font-helveticaLight uppercase tracking-wider">
-            {task.type === "Group" ? "Tasks to complete" : "complete by"}
+            {task.parent_task == null ? "Tasks to complete" : "complete by"}
           </Text>
           <Text className="font-helveticaBold ">
-            {task.type === "Group" ? numberOfSubTasks : "5 PM"}
+            {task.parent_task == null ? numberOfSubTasks : "5 PM"}
           </Text>
         </View>
       </View>

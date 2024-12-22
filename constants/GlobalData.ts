@@ -1,18 +1,17 @@
-import { TaskType } from "./Types";
 
 export type NavigationHeaderType = {
-  title: 'Groups' | 'Individual' | 'Pending';
+  title: 'Tasks' | 'Overdue' | 'Pending';
 };
 
 export const NavigationHeaders: Array<NavigationHeaderType> = [
   {
-    title: "Groups",
-  },
-  {
-    title: "Individual",
+    title: "Tasks",
   },
   {
     title: "Pending",
+  },
+  {
+    title: "Overdue",
   },
 ];
 

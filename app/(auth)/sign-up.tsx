@@ -122,7 +122,7 @@ const SignUpScreen = () => {
         className="absolute"
       />
       {loading && (
-        <View className="absolute top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center bg-primary-dark ">
+        <View className="absolute top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center bg-black/80 ">
           <ActivityIndicator size="large" color="#fff" />
         </View>
       )}

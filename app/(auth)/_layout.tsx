@@ -8,10 +8,10 @@ const AuthRoutesLayout = () => {
   const { isSignedIn } = useAuth();
   const router = useRouter()
 
-  if (isSignedIn) {
-    console.log("signed in");
-    return <Redirect href={"/(home)/home"} />;
-  }
+  // if (isSignedIn) {
+  //   console.log("signed in");
+  //   return <Redirect href={"/(home)/home"} />;
+  // }
 
   return (
     <Stack>
