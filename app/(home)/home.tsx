@@ -18,6 +18,8 @@ import { mockTasks } from "@/constants/MockData";
 import TaskCard from "@/components/TaskCard";
 import { getSupabaseClient } from "@/utils/supabase";
 import { Task } from "@/constants/Types";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import DeleteTaskModal from "@/components/DeleteTaskModal";
 
 type NavigationTextProps = {
   title: string;
@@ -52,6 +54,9 @@ const HomeScreen = () => {
   const [tasksData, setTasksData] = useState<Task[]>([]);
   const [selectedPage, setSelectedPage] = useState(NavigationHeaders[0].title);
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<Task | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     // const fetchTasks = async () => {
     //   try {
@@ -102,6 +107,7 @@ const HomeScreen = () => {
 
   // PAGE PROPERTIES HERE
   const navigationScrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollView>(null)
 
   const snapToItem = (index: number) => {
     if (navigationScrollRef.current) {
@@ -125,120 +131,167 @@ const HomeScreen = () => {
     );
   };
 
+  const onDismiss = (task: Task) => {
+    console.log('onDismiss tasks', task);
+    setTaskToDelete(task);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    setIsLoading(true);
+    // Implement delete task logic here
+    // await onConfirmDelete();
+    setIsLoading(false);
+    handleCloseDeleteModal(); // Ensure modal is closed after deletion
+  };
+
+  const taskCardRefs = useRef<Map<string, any>>(new Map());
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+    setTaskToDelete(undefined);
+    // Reset animation values for all TaskCards
+    // taskCardRefs.current.forEach((ref) => {
+    //   if (ref && ref.resetAnimationValues) {
+    //     ref.resetAnimationValues();
+    //   }
+    // });
+  };
+
   return (
-    <View className="relative w-full flex-1 bg-primary-dark ">
-      <Image
-        source={require("@/assets/images/checker_bg.png")}
-        style={{ width: "100%", height: "100%" }}
-        className="absolute"
-      />
-      <SafeAreaView className="px-4 flex items-center w-full">
-        {/* User Avatar and add task button */}
-        <View className="flex-row justify-between  items-center w-full">
-          {user?.imageUrl ? (
-            <TouchableOpacity
-              onPress={handleUserModalOpen}
-              className="bg-gray-300 rounded-full"
-            >
-              <Image
-                source={{ uri: user?.imageUrl }}
-                style={{ width: 52, height: 52 }}
-                className="rounded-full"
-              />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              className="w-[52px] h-[52px] bg-bold-green rounded-full flex items-center justify-center"
-              onPress={handleUserModalOpen}
-            >
-              <Text className="font-dmSans font-bold text-3xl">
-                {getInitials(user?.firstName, user?.lastName)}
-              </Text>
-            </TouchableOpacity>
-          )}
-
-          <TouchableOpacity onPress={() => router.push("/addTask")}>
-            <Ionicons name="add-outline" size={42} color="white" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Top navigation section */}
-        <View className="flex justify-start w-full mt-7 gap-3">
-          <Text className="tracking-widest text-secondary-white uppercase font-dmSans">
-            {formatDateToDayDateMonth()}
-          </Text>
-          <ScrollView
-            ref={navigationScrollRef}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{
-              columnGap: 23,
-            }}
-            scrollEventThrottle={16}
-            pagingEnabled
-          >
-            {NavigationHeaders.map((header, index) => (
-              <NavigationText
-                key={index}
-                title={header.title}
-                onPress={(title) => {
-                  handleNavigationChange(title);
-                  snapToItem(index);
-                }}
-                isSelected={header.title === selectedPage}
-              />
-            ))}
-          </ScrollView>
-        </View>
-
-        {/* Group Tasks Section */}
-        <View className="w-full mt-7">
-          <ScrollView
-            contentContainerStyle={{
-              rowGap: 10,
-              // flex: 1
-              paddingBottom: 300,
-            }}
-            showsVerticalScrollIndicator={false}
-            scrollEventThrottle={16}
-          >
-            {(selectedPage === "Pending" || selectedPage === "Overdue") && (
-              <>
-                {tasksData.filter((task) => task.parent_task == null).length >
-                  0 && (
-                  <View className="w-full flex justify-center items-center">
-                    <Text className="uppercase text-secondary-lightWhite font-helvetica tracking-wider text-sm">
-                      Group tasks ({tasksData.filter((task) => task.parent_task == null).length})
-                    </Text>
-                  </View>
-                )}
-                {tasksData
-                  .filter((task) => task.parent_task == null)
-                  .map((task, index) => (
-                    <TaskCard key={task.id} task={task} />
-                  ))}
-
-                {tasksData.filter((task) => task.parent_task != null).length >
-                  0 && (
-                  <View className="w-full flex justify-center items-center">
-                    <Text className="uppercase text-secondary-lightWhite font-helvetica tracking-wider text-sm">
-                      Sub tasks ({tasksData.filter((task) => task.parent_task != null).length})
-                    </Text>
-                  </View>
-                )}
-                {tasksData
-                  .filter((task) => task.parent_task != null)
-                  .map((task, index) => (
-                    <TaskCard key={task.id} task={task} />
-                  ))}
-              </>
+    <GestureHandlerRootView>
+      <View className="relative w-full flex-1 bg-primary-dark ">
+        <Image
+          source={require("@/assets/images/checker_bg.png")}
+          style={{ width: "100%", height: "100%" }}
+          className="absolute"
+        />
+        {showDeleteModal && (
+          <DeleteTaskModal
+            onClose={handleCloseDeleteModal}
+            isLoading={isLoading}
+            onConfirmDelete={handleConfirmDelete}
+            task={taskToDelete!}
+          />
+        )}
+        <SafeAreaView className="px-4 flex items-center w-full">
+          {/* User Avatar and add task button */}
+          <View className="flex-row justify-between  items-center w-full">
+            {user?.imageUrl ? (
+              <TouchableOpacity
+                onPress={handleUserModalOpen}
+                className="bg-gray-300 rounded-full"
+              >
+                <Image
+                  source={{ uri: user?.imageUrl }}
+                  style={{ width: 52, height: 52 }}
+                  className="rounded-full"
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                className="w-[52px] h-[52px] bg-bold-green rounded-full flex items-center justify-center"
+                onPress={handleUserModalOpen}
+              >
+                <Text className="font-dmSans font-bold text-3xl">
+                  {getInitials(user?.firstName, user?.lastName)}
+                </Text>
+              </TouchableOpacity>
             )}
-            {selectedPage === "Tasks" &&
-              tasksData.map((task, index) => (
-                <TaskCard key={task.id} task={task} />
+
+            <TouchableOpacity onPress={() => router.push("/addTask")}>
+              <Ionicons name="add-outline" size={42} color="white" />
+            </TouchableOpacity>
+          </View>
+
+          {/* Top navigation section */}
+          <View className="flex justify-start w-full mt-7 gap-3">
+            <Text className="tracking-widest text-secondary-white uppercase font-dmSans">
+              {formatDateToDayDateMonth()}
+            </Text>
+            <ScrollView
+              ref={navigationScrollRef}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{
+                columnGap: 23,
+              }}
+              scrollEventThrottle={16}
+              pagingEnabled
+            >
+              {NavigationHeaders.map((header, index) => (
+                <NavigationText
+                  key={index}
+                  title={header.title}
+                  onPress={(title) => {
+                    handleNavigationChange(title);
+                    snapToItem(index);
+                  }}
+                  isSelected={header.title === selectedPage}
+                />
               ))}
-          </ScrollView>
-          {/* <FlatList
+            </ScrollView>
+          </View>
+
+          {/* Group Tasks Section */}
+          <View className="w-full mt-7">
+            <ScrollView
+              ref={scrollRef}
+              contentContainerStyle={{
+                rowGap: 15,
+                // flex: 1
+                paddingBottom: 300,
+              }}
+              showsVerticalScrollIndicator={false}
+              scrollEventThrottle={16}
+            >
+              {(selectedPage === "Pending" || selectedPage === "Overdue") && (
+                <>
+                  {tasksData.filter((task) => task.parent_task == null).length >
+                    0 && (
+                    <View className="w-full flex justify-center items-center">
+                      <Text className="uppercase text-secondary-lightWhite font-helvetica tracking-wider text-sm">
+                        Group tasks (
+                        {
+                          tasksData.filter((task) => task.parent_task == null)
+                            .length
+                        }
+                        )
+                      </Text>
+                    </View>
+                  )}
+                  {tasksData
+                    .filter((task) => task.parent_task == null)
+                    .map((task, index) => (
+                      <TaskCard simGesture={scrollRef} onDismiss={onDismiss} key={task.id} task={task}/>
+                    ))}
+
+                  {tasksData.filter((task) => task.parent_task != null).length >
+                    0 && (
+                    <View className="w-full flex justify-center items-center">
+                      <Text className="uppercase text-secondary-lightWhite font-helvetica tracking-wider text-sm">
+                        Sub tasks (
+                        {
+                          tasksData.filter((task) => task.parent_task != null)
+                            .length
+                        }
+                        )
+                      </Text>
+                    </View>
+                  )}
+                  {tasksData
+                    .filter((task) => task.parent_task != null)
+                    .map((task, index) => (
+                      <TaskCard simGesture={scrollRef} onDismiss={onDismiss} key={task.id} task={task}/>
+                    ))}
+                </>
+              )}
+              {selectedPage === "Tasks" &&
+                tasksData.map((task, index) => (
+                  <TaskCard simGesture={scrollRef} onDismiss={onDismiss} key={task.id} task={task}/>
+                ))}
+            </ScrollView>
+            {/* <FlatList
             data={tasksData}
             renderItem={({ item }) => <TaskCard task={item} />}
             keyExtractor={(item) => item.id}
@@ -249,9 +302,10 @@ const HomeScreen = () => {
             }}
             showsVerticalScrollIndicator={false}
           /> */}
-        </View>
-      </SafeAreaView>
-    </View>
+          </View>
+        </SafeAreaView>
+      </View>
+    </GestureHandlerRootView>
   );
 };
 
