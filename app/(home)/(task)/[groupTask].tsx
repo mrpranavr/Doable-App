@@ -104,8 +104,8 @@ const GroupTaskScreen = () => {
           </View>
         </View>
 
-        <View className="mt-7 gap-7 px-4">
-          <Text className=" font-helvetica text-[96px] tracking-widest text-secondary-white">
+        <View className="mt-7 gap-7 px-4 w-full items-start">
+          <Text className="ont-helvetica text-[96px] tracking-widest text-secondary-white">
             TASKS
           </Text>
 

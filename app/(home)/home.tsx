@@ -80,7 +80,7 @@ const HomeScreen = () => {
         data = mockTasks.filter((task: Task) => task.parent_task == null);
         break;
       case "Overdue":
-        data = mockTasks.filter((task: Task) => task.status === "Overdue");
+        data = mockTasks.filter((task: Task) => task.endDate < new Date());
         break;
       case "Pending":
         data = mockTasks.filter(

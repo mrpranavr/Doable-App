@@ -21,27 +21,26 @@ const CARD_SIZE = 150;
 const SubTaskCard = ({ task, translateY, index }: SubTaskCardProps) => {
   // console.log(index)
 
-  const router = useRouter()
+  const router = useRouter();
 
   const rStyle = useAnimatedStyle(() => {
-
     const scale = interpolate(
       translateY.value,
-      [-1, 0, CARD_SIZE * (index), CARD_SIZE * (index + 2) ],
+      [-1, 0, CARD_SIZE * index, CARD_SIZE * (index + 2)],
       [1, 1, 1, 0.8], // Adjust scale values to fit your design
       Extrapolation.EXTEND
     );
 
     const translateYValue = interpolate(
       translateY.value,
-      [-1, 0, CARD_SIZE * (index), CARD_SIZE * (index + 4) ],
+      [-1, 0, CARD_SIZE * index, CARD_SIZE * (index + 4)],
       [0, 0, 0, 500], // Adjust scale values to fit your design
       Extrapolation.EXTEND
     );
 
     const opacity = interpolate(
       translateY.value,
-      [-1, 0, CARD_SIZE * (index), CARD_SIZE * (index + 8) ],
+      [-1, 0, CARD_SIZE * index, CARD_SIZE * (index + 8)],
       [1, 1, 1, 0], // Fade out slightly
       Extrapolation.CLAMP
     );
@@ -60,13 +59,13 @@ const SubTaskCard = ({ task, translateY, index }: SubTaskCardProps) => {
 
   const handleOpenTask = () => {
     router.push({
-      pathname: '/(home)/(task)/taskDetail/[taskId]',
+      pathname: "/(home)/(task)/taskDetail/[taskId]",
       params: {
-        taskId: task.title,
-        taskColor: color
-      }
-    })
-  }
+        taskId: task.id,
+        taskColor: color,
+      },
+    });
+  };
 
   return (
     <Animated.View
@@ -75,23 +74,25 @@ const SubTaskCard = ({ task, translateY, index }: SubTaskCardProps) => {
     >
       {/* Header section */}
       <View className="flex-row w-full justify-between items-center mb-4">
-        <TouchableOpacity className="rounded-[12px] border-black border-[2px] w-[37px] h-[30px] items-center justify-center">
-          {
-            task.status === 'Complete'? (
-              <Ionicons name="checkmark" color="black" size={20} />
-            ) : (
-              <View className="hidden"></View>
-            )
-          }
+        <TouchableOpacity className="rounded-[12px] border-black border-[1.3px] w-[37px] h-[30px] items-center justify-center p-[2px]">
+          {task?.status === "Complete" ? (
+            <View className="bg-black rounded-[10px] w-full h-full items-center justify-center">
+              <Ionicons name="checkmark" color="white" size={20} />
+            </View>
+          ) : (
+            <View className="hidden"></View>
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity onPress={handleOpenTask}>
           <Ionicons name="open-outline" color="black" size={34} />
         </TouchableOpacity>
       </View>
-      
-      <Animated.Text 
-        className={`font-helvetica text-[40px] uppercase text-black ${task.status === 'Complete' ? 'line-through text-gray-800' : ''}`} 
+
+      <Animated.Text
+        className={`font-helvetica text-[40px] uppercase text-black ${
+          task.status === "Complete" ? "line-through text-gray-800" : ""
+        }`}
         sharedTransitionTag={`task-title-${task.title}`}
       >
         {task.title}

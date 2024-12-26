@@ -18,12 +18,12 @@ const AddTaskScreen = () => {
 
   const handleStartDateChange = (date: Date | string) => {
     setStartDate(date as Date);
-    const formattedDate = (date as Date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    const formattedDate = (date as Date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
     setDateStringValue(formattedDate);
     setOpen(false);
@@ -31,12 +31,12 @@ const AddTaskScreen = () => {
 
   const handleEndDateChange = (date: Date | string) => {
     setEndDate(date as Date);
-    const formattedDate = (date as Date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric', 
-      hour: '2-digit',
-      minute: '2-digit'
+    const formattedDate = (date as Date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
     setEndDateStringValue(formattedDate);
     setOpenEndDatePicker(false);
@@ -77,23 +77,16 @@ const AddTaskScreen = () => {
 
         <View className="mt-9 gap-5 ">
           <CustomTextInput
-            placeholder="Task Title"
+            placeholder="What is it about?"
             type="default"
             value={taskTitle}
             onChange={handleTaskTitleChange}
             hasError={false}
           />
-          <CustomTextInput
-            placeholder="Task Description"
-            type="default"
-            value={taskDescription}
-            onChange={handleTaskDescriptionChange}
-            hasError={false}
-          />
 
           <View className="flex">
             <CustomTextInput
-              placeholder="Enter Start Date"
+              placeholder="When to start?"
               type="date"
               dateValue={startDate}
               onChange={handleStartDateChange}
@@ -106,7 +99,7 @@ const AddTaskScreen = () => {
             />
           </View>
           <CustomTextInput
-            placeholder="Enter End Date"
+            placeholder="When to end?"
             type="date"
             dateValue={endDate}
             onChange={handleEndDateChange}
@@ -117,16 +110,24 @@ const AddTaskScreen = () => {
             onPress={handleOpenEndDatePicker}
             editable={false}
           />
+
+          <CustomTextInput
+            placeholder="You can add more details here"
+            type="default"
+            value={taskDescription}
+            onChange={handleTaskDescriptionChange}
+            hasError={false}
+          />
         </View>
       </ScrollView>
 
       <TouchableOpacity
         className="w-full bg-bold-green rounded-full px-4 py-5 flex items-center justify-center"
         onPress={() => {
-          console.log('Title --> ', taskTitle)
-          console.log('Description --> ', taskDescription)
-          console.log('Start Date --> ', startDate)
-          console.log('End Date --> ', endDate)
+          console.log("Title --> ", taskTitle);
+          console.log("Description --> ", taskDescription);
+          console.log("Start Date --> ", startDate);
+          console.log("End Date --> ", endDate);
         }}
       >
         <Text className="font-dmSansBold font-bold text-base tracking-widest text-primary-dark">

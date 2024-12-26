@@ -118,7 +118,7 @@ const NewUserSignUpScreen = () => {
           <ActivityIndicator size="large" color="#fff" />
         </View>
       )}
-      <View>
+      <View className="w-full">
         <Text className="font-dmSansBold text-secondary-white tracking-widest text-3xl text-center">
           Set up your profile ✍🏼
         </Text>

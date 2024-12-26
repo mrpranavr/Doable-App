@@ -71,8 +71,8 @@ const TaskCard = ({ task }: TaskCardProps) => {
           <Text className="font-helveticaLight uppercase tracking-wider">
             {task.parent_task == null ? "Tasks to complete" : "complete by"}
           </Text>
-          <Text className="font-helveticaBold ">
-            {task.parent_task == null ? numberOfSubTasks : "5 PM"}
+          <Text className="font-helveticaBold tracking-wider">
+            {task.parent_task == null ? numberOfSubTasks : new Date(task.endDate).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
           </Text>
         </View>
       </View>

@@ -143,12 +143,12 @@ const CustomTextInput = ({
             }}
             keyboardType={keyboardType}
             onFocus={
-              type === "date" ? handleDateInputFocused : handleTextInputFocused
+              type === "date" || type === 'time' ? handleDateInputFocused : handleTextInputFocused
             }
             onBlur={handleTextInputBlurred}
             secureTextEntry={type === "password"}
             style={{ fontFamily: "DMSans-Regular"}}
-            onPress={type === "date" ? handleDateInputFocused : () => {}}
+            onPress={type === "date" || type === 'time' ? handleDateInputFocused : () => {}}
             editable={editable}
             numberOfLines={2}
             textAlignVertical="top"
@@ -157,6 +157,16 @@ const CustomTextInput = ({
             <DatePicker
               modal
               mode="datetime"
+              open={openDatePicker}
+              date={dateValue!}
+              onConfirm={onChange}
+              onCancel={handleTextInputBlurred}
+            />
+          )}
+          {type === "time" && (
+            <DatePicker
+              modal
+              mode="time"
               open={openDatePicker}
               date={dateValue!}
               onConfirm={onChange}
