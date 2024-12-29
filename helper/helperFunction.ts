@@ -33,7 +33,7 @@ export const formatDateToDayDateMonth = () => {
 
 
 export function getDatePart(
-  timestamp: Date,
+  timestamp: Date | any,
   part: 'day' | 'month' | 'year',
   abbr: boolean = false
 ): string | number {

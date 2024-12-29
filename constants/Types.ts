@@ -10,5 +10,6 @@ export type Task = {
   description?: string,
   user_id: string,
   parent_task?: string,
-  priority: TaskPriority
+  priority: TaskPriority,
+  tags?: string[]
 }

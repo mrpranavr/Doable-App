@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   FlatList,
+  Vibration,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { useAuth, useClerk, useUser } from "@clerk/clerk-expo";
@@ -107,7 +108,7 @@ const HomeScreen = () => {
 
   // PAGE PROPERTIES HERE
   const navigationScrollRef = useRef<ScrollView>(null);
-  const scrollRef = useRef<ScrollView>(null)
+  const scrollRef = useRef<ScrollView>(null);
 
   const snapToItem = (index: number) => {
     if (navigationScrollRef.current) {
@@ -132,9 +133,11 @@ const HomeScreen = () => {
   };
 
   const onDismiss = (task: Task) => {
-    console.log('onDismiss tasks', task);
+    console.log("onDismiss tasks", task);
     setTaskToDelete(task);
     setShowDeleteModal(true);
+
+    Vibration.vibrate(200);
   };
 
   const handleConfirmDelete = async () => {
@@ -159,139 +162,153 @@ const HomeScreen = () => {
   };
 
   return (
-    <GestureHandlerRootView>
-      <View className="relative w-full flex-1 bg-primary-dark ">
-        <Image
-          source={require("@/assets/images/checker_bg.png")}
-          style={{ width: "100%", height: "100%" }}
-          className="absolute"
+    <View className="relative w-full flex-1 bg-primary-dark ">
+      <Image
+        source={require("@/assets/images/checker_bg.png")}
+        style={{ width: "100%", height: "100%" }}
+        className="absolute"
+      />
+      {showDeleteModal && (
+        <DeleteTaskModal
+          onClose={handleCloseDeleteModal}
+          isLoading={isLoading}
+          onConfirmDelete={handleConfirmDelete}
+          task={taskToDelete!}
         />
-        {showDeleteModal && (
-          <DeleteTaskModal
-            onClose={handleCloseDeleteModal}
-            isLoading={isLoading}
-            onConfirmDelete={handleConfirmDelete}
-            task={taskToDelete!}
-          />
-        )}
-        <SafeAreaView className="px-4 flex items-center w-full">
-          {/* User Avatar and add task button */}
-          <View className="flex-row justify-between  items-center w-full">
-            {user?.imageUrl ? (
-              <TouchableOpacity
-                onPress={handleUserModalOpen}
-                className="bg-gray-300 rounded-full"
-              >
-                <Image
-                  source={{ uri: user?.imageUrl }}
-                  style={{ width: 52, height: 52 }}
-                  className="rounded-full"
-                />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                className="w-[52px] h-[52px] bg-bold-green rounded-full flex items-center justify-center"
-                onPress={handleUserModalOpen}
-              >
-                <Text className="font-dmSans font-bold text-3xl">
-                  {getInitials(user?.firstName, user?.lastName)}
-                </Text>
-              </TouchableOpacity>
-            )}
-
-            <TouchableOpacity onPress={() => router.push("/addTask")}>
-              <Ionicons name="add-outline" size={42} color="white" />
-            </TouchableOpacity>
-          </View>
-
-          {/* Top navigation section */}
-          <View className="flex justify-start w-full mt-7 gap-3">
-            <Text className="tracking-widest text-secondary-white uppercase font-dmSans">
-              {formatDateToDayDateMonth()}
-            </Text>
-            <ScrollView
-              ref={navigationScrollRef}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{
-                columnGap: 23,
-              }}
-              scrollEventThrottle={16}
-              pagingEnabled
+      )}
+      <SafeAreaView className="px-4 flex items-center w-full">
+        {/* User Avatar and add task button */}
+        <View className="flex-row justify-between  items-center w-full">
+          {user?.imageUrl ? (
+            <TouchableOpacity
+              onPress={handleUserModalOpen}
+              className="bg-gray-300 rounded-full"
             >
-              {NavigationHeaders.map((header, index) => (
-                <NavigationText
-                  key={index}
-                  title={header.title}
-                  onPress={(title) => {
-                    handleNavigationChange(title);
-                    snapToItem(index);
-                  }}
-                  isSelected={header.title === selectedPage}
+              <Image
+                source={{ uri: user?.imageUrl }}
+                style={{ width: 52, height: 52 }}
+                className="rounded-full"
+              />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              className="w-[52px] h-[52px] bg-bold-green rounded-full flex items-center justify-center"
+              onPress={handleUserModalOpen}
+            >
+              <Text className="font-dmSans font-bold text-3xl">
+                {getInitials(user?.firstName, user?.lastName)}
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          <TouchableOpacity onPress={() => router.push("/addTask")}>
+            <Ionicons name="add-outline" size={42} color="white" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Top navigation section */}
+        <View className="flex justify-start w-full mt-7 gap-3">
+          <Text className="tracking-widest text-secondary-white uppercase font-dmSans">
+            {formatDateToDayDateMonth()}
+          </Text>
+          <ScrollView
+            ref={navigationScrollRef}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{
+              columnGap: 23,
+            }}
+            scrollEventThrottle={16}
+            pagingEnabled
+          >
+            {NavigationHeaders.map((header, index) => (
+              <NavigationText
+                key={index}
+                title={header.title}
+                onPress={(title) => {
+                  handleNavigationChange(title);
+                  snapToItem(index);
+                }}
+                isSelected={header.title === selectedPage}
+              />
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Group Tasks Section */}
+        <View className="w-full mt-7">
+          <ScrollView
+            ref={scrollRef}
+            contentContainerStyle={{
+              rowGap: 15,
+              // flex: 1
+              paddingBottom: 300,
+            }}
+            showsVerticalScrollIndicator={false}
+            scrollEventThrottle={16}
+          >
+            {(selectedPage === "Pending" || selectedPage === "Overdue") && (
+              <>
+                {tasksData.filter((task) => task.parent_task == null).length >
+                  0 && (
+                  <View className="w-full flex justify-center items-center">
+                    <Text className="uppercase text-secondary-lightWhite font-helvetica tracking-wider text-sm">
+                      Group tasks (
+                      {
+                        tasksData.filter((task) => task.parent_task == null)
+                          .length
+                      }
+                      )
+                    </Text>
+                  </View>
+                )}
+                {tasksData
+                  .filter((task) => task.parent_task == null)
+                  .map((task, index) => (
+                    <TaskCard
+                      simGesture={scrollRef}
+                      onDismiss={onDismiss}
+                      key={task.id}
+                      task={task}
+                    />
+                  ))}
+
+                {tasksData.filter((task) => task.parent_task != null).length >
+                  0 && (
+                  <View className="w-full flex justify-center items-center">
+                    <Text className="uppercase text-secondary-lightWhite font-helvetica tracking-wider text-sm">
+                      Sub tasks (
+                      {
+                        tasksData.filter((task) => task.parent_task != null)
+                          .length
+                      }
+                      )
+                    </Text>
+                  </View>
+                )}
+                {tasksData
+                  .filter((task) => task.parent_task != null)
+                  .map((task, index) => (
+                    <TaskCard
+                      simGesture={scrollRef}
+                      onDismiss={onDismiss}
+                      key={task.id}
+                      task={task}
+                    />
+                  ))}
+              </>
+            )}
+            {selectedPage === "Tasks" &&
+              tasksData.map((task, index) => (
+                <TaskCard
+                  simGesture={scrollRef}
+                  onDismiss={onDismiss}
+                  key={task.id}
+                  task={task}
                 />
               ))}
-            </ScrollView>
-          </View>
-
-          {/* Group Tasks Section */}
-          <View className="w-full mt-7">
-            <ScrollView
-              ref={scrollRef}
-              contentContainerStyle={{
-                rowGap: 15,
-                // flex: 1
-                paddingBottom: 300,
-              }}
-              showsVerticalScrollIndicator={false}
-              scrollEventThrottle={16}
-            >
-              {(selectedPage === "Pending" || selectedPage === "Overdue") && (
-                <>
-                  {tasksData.filter((task) => task.parent_task == null).length >
-                    0 && (
-                    <View className="w-full flex justify-center items-center">
-                      <Text className="uppercase text-secondary-lightWhite font-helvetica tracking-wider text-sm">
-                        Group tasks (
-                        {
-                          tasksData.filter((task) => task.parent_task == null)
-                            .length
-                        }
-                        )
-                      </Text>
-                    </View>
-                  )}
-                  {tasksData
-                    .filter((task) => task.parent_task == null)
-                    .map((task, index) => (
-                      <TaskCard simGesture={scrollRef} onDismiss={onDismiss} key={task.id} task={task}/>
-                    ))}
-
-                  {tasksData.filter((task) => task.parent_task != null).length >
-                    0 && (
-                    <View className="w-full flex justify-center items-center">
-                      <Text className="uppercase text-secondary-lightWhite font-helvetica tracking-wider text-sm">
-                        Sub tasks (
-                        {
-                          tasksData.filter((task) => task.parent_task != null)
-                            .length
-                        }
-                        )
-                      </Text>
-                    </View>
-                  )}
-                  {tasksData
-                    .filter((task) => task.parent_task != null)
-                    .map((task, index) => (
-                      <TaskCard simGesture={scrollRef} onDismiss={onDismiss} key={task.id} task={task}/>
-                    ))}
-                </>
-              )}
-              {selectedPage === "Tasks" &&
-                tasksData.map((task, index) => (
-                  <TaskCard simGesture={scrollRef} onDismiss={onDismiss} key={task.id} task={task}/>
-                ))}
-            </ScrollView>
-            {/* <FlatList
+          </ScrollView>
+          {/* <FlatList
             data={tasksData}
             renderItem={({ item }) => <TaskCard task={item} />}
             keyExtractor={(item) => item.id}
@@ -302,10 +319,9 @@ const HomeScreen = () => {
             }}
             showsVerticalScrollIndicator={false}
           /> */}
-          </View>
-        </SafeAreaView>
-      </View>
-    </GestureHandlerRootView>
+        </View>
+      </SafeAreaView>
+    </View>
   );
 };
 
