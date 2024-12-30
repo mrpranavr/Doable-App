@@ -7,6 +7,7 @@ import Animated, {
   FadeIn,
   FadeInDown,
   FadeInLeft,
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
@@ -28,6 +29,7 @@ const TaskDetailScreen = () => {
   // Animation variables
   const arrowTranslateX = useSharedValue(0);
   const buttonTranslateX = useSharedValue(0);
+  const buttonMarkAsDoneOpacity = useSharedValue(0)
 
   const isStringColor = (color: any): color is string =>
     typeof color === "string";
@@ -35,11 +37,26 @@ const TaskDetailScreen = () => {
   const validTaskColor = isStringColor(taskColor) ? taskColor : "defaultColor";
 
   const [task, setTask] = useState<Task | undefined>(undefined);
+  const [taskStatus, setTaskStatus] = useState<string | undefined>(undefined);
+
+  const handleTaskStatusChange = (isComplete: boolean) => {
+    if (task) {
+      const updatedTask = {
+        ...task,
+        status: isComplete ? "Complete" : "Incomplete"
+      };
+
+      setTaskStatus(updatedTask.status);
+      // setTask(updatedTask);
+      // Here you would typically also update the task in your backend/storage
+    }
+  };
 
   useEffect(() => {
     const currentTask = mockTasks.find((task) => task.id === taskId);
     if (currentTask) {
       setTask(currentTask);
+      setTaskStatus(currentTask.status);
     }
 
     arrowTranslateX.value = withRepeat(
@@ -51,10 +68,12 @@ const TaskDetailScreen = () => {
       -1,
       true
     );
+    buttonTranslateX.value = currentTask?.status === "Complete" ? BUTTON_THRESHOLD : 0;
+    buttonMarkAsDoneOpacity.value = currentTask?.status === "Complete" ? 0 : 1;
   }, []);
 
-  // ANIMATION FUNCTIONS
 
+  // ANIMATION FUNCTIONS
   const panGesture = Gesture.Pan()
     .onChange((event) => {      
       // Allow movement between 0 and threshold in both directions
@@ -79,6 +98,9 @@ const TaskDetailScreen = () => {
         snapToEnd ? BUTTON_THRESHOLD : 0,
         { duration: 500 }
       );
+
+      // Update task status based on final position
+      runOnJS(handleTaskStatusChange)(snapToEnd);
     });
 
   const rArrowAnimation = useAnimatedStyle(() => {
@@ -100,6 +122,7 @@ const TaskDetailScreen = () => {
       ],
     };
   });
+
 
   return (
     <Animated.View
@@ -224,9 +247,11 @@ const TaskDetailScreen = () => {
               style={rButtonAnimation}
             >
               {/* <Ionicons name="checkmark" size={25} color="black" /> */}
-              <Text className="font-helvetica text-black text-[14px] uppercase">
-                Mark as Done
-              </Text>
+              <Animated.Text className="font-helvetica text-black text-[14px] uppercase">
+                {
+                  taskStatus === "Complete" ? "Completed" : "Mark as Done"
+                }
+              </Animated.Text>
             </Animated.View>
           </GestureDetector>
         </View>
