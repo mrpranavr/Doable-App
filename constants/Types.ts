@@ -11,5 +11,6 @@ export type Task = {
   user_id: string,
   parent_task?: string,
   priority: TaskPriority,
-  tags?: string[]
+  tags?: string[],
+  type: 'Group' | 'Task'
 }

@@ -100,19 +100,19 @@ const TaskCard = forwardRef<TaskCardHandle, TaskCardProps>(
       };
     });
 
-    const handleGroupTaskTransition = (parentId: string | undefined) => {
-      if (!parentId) {
+    const handleGroupTaskTransition = (task: Task | undefined) => {
+      if (task!.type === 'Group') {
         router.push({
           pathname: "/(home)/(task)/[groupTask]",
           params: {
-            groupTask: task.id,
+            groupTask: task!.id,
           },
         });
       } else {
         router.push({
           pathname: "/(home)/(task)/taskDetail/[taskId]",
           params: {
-            taskId: task.id,
+            taskId: task!.id,
             taskColor: bgColor,
           },
         });
@@ -145,7 +145,7 @@ const TaskCard = forwardRef<TaskCardHandle, TaskCardProps>(
                   alignItems: "center",
                 },
               ]}
-              onPress={() => handleGroupTaskTransition(task.parent_task)}
+              onPress={() => handleGroupTaskTransition(task)}
             >
               <View className="flex items-center gap-2">
                 <View className="items-center">
@@ -153,7 +153,7 @@ const TaskCard = forwardRef<TaskCardHandle, TaskCardProps>(
                     {getDatePart(task.startDate, "day", false)}
                   </Text>
                   <Text className="text-black font-helvetica tracking-wider text-[12px] uppercase">
-                    {getDatePart(task.startDate, "month", true)}
+                    {getDatePart(task.startDate as Date, "month", true)}
                   </Text>
                 </View>
                 <View className="w-[1.5px] rounded-full flex-1 bg-black"></View>
@@ -172,12 +172,12 @@ const TaskCard = forwardRef<TaskCardHandle, TaskCardProps>(
                 </Text>
                 <View className="flex-row w-full gap-4">
                   <Text className="font-helveticaLight uppercase tracking-wider">
-                    {task.parent_task == null
+                    {task.type === 'Group'
                       ? "Tasks to complete"
                       : "complete by"}
                   </Text>
                   <Text className="font-helveticaBold tracking-wider">
-                    {task.parent_task == null
+                    {task.type === 'Group'
                       ? numberOfSubTasks
                       : new Date(task.endDate).toLocaleTimeString("en-US", {
                           hour: "numeric",

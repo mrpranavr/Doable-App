@@ -1,4 +1,5 @@
 import { CardColors } from "@/constants/GlobalData";
+import { Task } from "@/constants/Types";
 
 export const randomColor = () => {
     if (!Array.isArray(CardColors) || CardColors.length === 0) {
@@ -50,5 +51,22 @@ export function getDatePart(
       return year;
     default:
       throw new Error("Invalid part specified. Use 'day', 'month', or 'year'.");
+  }
+}
+
+export const mapToTask = (raw: any) : Task => {
+  console.log('Task type --> ', raw.type)
+  return {
+    id: raw.id,
+    title: raw.title,
+    endDate: new Date(raw.endDate),
+    priority: raw.priority,
+    startDate: new Date(raw.startDate),
+    status: raw.status,
+    type: raw.type,
+    user_id: raw.user_id,
+    description: raw.description,
+    parent_task: raw.parent_task,
+    tags: raw.tags
   }
 }
