@@ -4,6 +4,8 @@ import CustomTextInput from "@/components/CustomTextInput";
 // import DatePicker from "react-native-date-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DatePicker from "react-native-date-picker";
+import { getSupabaseClient } from "@/utils/supabase";
+import { useAuth } from "@clerk/clerk-expo";
 
 const AddTaskScreen = () => {
   const [startDate, setStartDate] = useState(new Date());
@@ -15,6 +17,8 @@ const AddTaskScreen = () => {
 
   const [taskTitle, setTaskTitle] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
+
+  const { getToken, userId } = useAuth()
 
   const handleStartDateChange = (date: Date | string) => {
     setStartDate(date as Date);
@@ -64,6 +68,36 @@ const AddTaskScreen = () => {
   const handleTaskDescriptionChange = (text: any) => {
     setTaskDescription(text);
   };
+
+  // Handler classes for creating tasks in supabase
+  const createTask = async () => {
+    try {
+      const supabase = await getSupabaseClient(getToken)
+
+      const { data, error } = await supabase
+      .from('Tasks')
+      .insert([
+        {
+          user_id: userId,
+          title: taskTitle,
+          description: taskDescription,
+          status: 'Incomplete',
+          priority: 'Low',
+          startDate: startDate,
+          endDate: endDate
+          // Add other fields as needed
+        }
+      ])
+      .select();
+
+      if(error) {
+        console.log('Error creating task --> ', error)
+      }
+
+    } catch (error : any) {
+      console.log("error while creating tasks in supabase --> ", error.message[0])
+    }
+  }
 
   return (
     <View className="bg-primary-dark flex-1 items-center px-4 gap-2 justify-between pb-14">
@@ -128,6 +162,8 @@ const AddTaskScreen = () => {
           console.log("Description --> ", taskDescription);
           console.log("Start Date --> ", startDate);
           console.log("End Date --> ", endDate);
+
+          createTask()
         }}
       >
         <Text className="font-dmSansBold font-bold text-base tracking-widest text-primary-dark">
